@@ -2,100 +2,84 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>📸 GPS Camera Mini</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>📱 GPS Real-time + QR Scanner</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
         }
 
         body {
-            background: #0a0f1e;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0f172a;
             min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             padding: 12px;
         }
 
-        /* Mini Container */
-        .mini-container {
-            max-width: 340px;
+        .container {
+            max-width: 500px;
             width: 100%;
-            background: rgba(18, 25, 40, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 32px;
-            padding: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.6);
+            background: #1e293b;
+            border-radius: 28px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border: 1px solid #334155;
         }
 
-        /* Header */
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 14px;
-        }
-
-        .logo {
+        h2 {
+            color: #facc15;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .logo-icon {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            color: white;
-            box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3);
-        }
-
-        .logo-text h2 {
-            color: white;
-            font-size: 16px;
-            font-weight: 700;
-        }
-
-        .logo-text p {
-            color: #6b7a99;
-            font-size: 10px;
+        h2 span {
+            background: #facc15;
+            color: #0f172a;
+            font-size: 14px;
+            padding: 4px 10px;
+            border-radius: 40px;
             font-weight: 500;
         }
 
-        .signal {
-            background: rgba(34, 197, 94, 0.15);
-            padding: 4px 10px;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
+        .gps-card {
+            background: #0f172a;
+            border-radius: 24px;
+            padding: 16px;
+            margin: 16px 0 20px 0;
+            border: 1px solid #334155;
+            position: relative;
+            overflow: hidden;
         }
 
-        .dot {
-            width: 6px;
-            height: 6px;
+        .gps-card.updating {
+            border: 2px solid #facc15;
+            box-shadow: 0 0 20px rgba(250,204,21,0.3);
+        }
+
+        .gps-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .gps-header .dot {
+            width: 12px;
+            height: 12px;
             background: #22c55e;
             border-radius: 50%;
             animation: pulse 1.5s infinite;
-        }
-
-        .signal span {
-            color: #22c55e;
-            font-size: 11px;
-            font-weight: 600;
         }
 
         @keyframes pulse {
@@ -104,122 +88,116 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
-        /* GPS Mini Card */
-        .gps-card {
-            background: rgba(0, 0, 0, 0.25);
-            border-radius: 24px;
-            padding: 14px;
-            margin-bottom: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .gps-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-
-        .gps-label {
-            color: #6b7a99;
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .gps-value {
-            color: white;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            font-weight: 600;
-            background: rgba(0, 0, 0, 0.3);
+        .update-counter {
+            margin-left: auto;
+            background: #1e293b;
             padding: 4px 10px;
-            border-radius: 20px;
+            border-radius: 40px;
+            font-size: 12px;
+            color: #facc15;
+            border: 1px solid #334155;
         }
 
-        .gps-value.lat {
-            color: #3b82f6;
-        }
-
-        .gps-value.lng {
-            color: #8b5cf6;
-        }
-
-        .gps-stats {
+        .coord-row {
             display: flex;
-            gap: 8px;
-            margin-top: 8px;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #334155;
         }
 
-        .stat {
+        .coord-row:last-child {
+            border-bottom: none;
+        }
+
+        .coord-label {
+            color: #94a3b8;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .coord-value {
+            background: #1e293b;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #facc15;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+        }
+
+        .coord-value.changed {
+            background: #facc15;
+            color: #0f172a;
+            transform: scale(1.05);
+        }
+
+        .speed-indicator {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #334155;
+        }
+
+        .speed-item {
             flex: 1;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 16px;
-            padding: 8px;
             text-align: center;
         }
 
-        .stat .value {
-            color: white;
-            font-size: 14px;
+        .speed-label {
+            color: #94a3b8;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .speed-value {
+            color: #facc15;
             font-weight: 600;
+            font-size: 14px;
         }
 
-        .stat .label {
-            color: #6b7a99;
-            font-size: 9px;
-            margin-top: 2px;
-        }
-
-        /* Camera Section */
         .camera-section {
-            background: rgba(0, 0, 0, 0.25);
+            background: #0f172a;
             border-radius: 24px;
-            padding: 14px;
-            margin-bottom: 14px;
+            padding: 16px;
+            border: 1px solid #334155;
         }
 
         .camera-header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin-bottom: 12px;
+            align-items: center;
+            margin-bottom: 16px;
         }
 
         .camera-header h3 {
-            color: white;
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            color: #94a3b8;
+            font-size: 16px;
+            font-weight: 400;
         }
 
-        .camera-status {
-            background: rgba(239, 68, 68, 0.15);
-            padding: 4px 10px;
-            border-radius: 30px;
-            color: #ef4444;
-            font-size: 11px;
-            font-weight: 600;
+        .status-badge {
+            background: #1e293b;
+            color: #facc15;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
         }
 
-        .camera-status.active {
-            background: rgba(34, 197, 94, 0.15);
-            color: #22c55e;
-        }
-
-        /* Video Container */
         .video-container {
             position: relative;
             width: 100%;
-            aspect-ratio: 4/3;
-            background: #000;
             border-radius: 20px;
             overflow: hidden;
-            margin-bottom: 12px;
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: #000;
+            aspect-ratio: 4/3;
+            border: 2px solid #334155;
         }
 
         #video {
@@ -228,498 +206,327 @@
             object-fit: cover;
         }
 
-        #canvas {
-            display: none;
-        }
-
         .scan-overlay {
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            border: 2px solid #3b82f6;
-            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            height: 100%;
+            border: 3px solid rgba(250, 204, 21, 0.6);
+            box-shadow: 0 0 0 9999px rgba(0,0,0,0.3);
             pointer-events: none;
-            animation: scan 2s infinite;
         }
 
-        @keyframes scan {
-            0% { border-color: #3b82f6; }
-            50% { border-color: #8b5cf6; }
-            100% { border-color: #3b82f6; }
+        .result-card {
+            margin-top: 20px;
+            background: #0f172a;
+            border-radius: 20px;
+            padding: 16px;
+            border: 1px solid #334155;
         }
 
-        /* Button Grid */
-        .button-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin: 10px 0;
+        .result-title {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .qr-result {
+            background: #1e293b;
+            padding: 14px 16px;
+            border-radius: 16px;
+            color: #facc15;
+            font-family: monospace;
+            font-size: 18px;
+            word-break: break-all;
+            border: 1px dashed #334155;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
         }
 
         .btn {
-            padding: 12px;
+            flex: 1;
+            padding: 14px;
             border: none;
-            border-radius: 24px;
+            border-radius: 40px;
             font-weight: 600;
-            font-size: 13px;
+            font-size: 16px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
             transition: all 0.2s;
         }
 
-        .btn.primary {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: white;
-            box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3);
+        .btn-primary {
+            background: #facc15;
+            color: #0f172a;
         }
 
-        .btn.secondary {
-            background: rgba(45, 58, 79, 0.8);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .btn-primary:hover {
+            background: #eab308;
+            transform: scale(0.98);
         }
 
-        .btn.primary:active {
-            transform: scale(0.97);
+        .btn-secondary {
+            background: #334155;
+            color: #fff;
         }
 
-        .btn.secondary:active {
-            transform: scale(0.97);
+        .btn-secondary:hover {
+            background: #475569;
         }
 
-        /* Photo Preview */
-        .photo-preview {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 20px;
-            padding: 12px;
-            margin-top: 12px;
-            display: none;
-        }
-
-        .photo-preview.show {
-            display: block;
-        }
-
-        .preview-header {
+        .stats-row {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .preview-header span {
-            color: white;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .preview-image {
-            width: 100%;
-            height: 140px;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .preview-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .preview-info {
             margin-top: 10px;
-            font-size: 11px;
-            color: #94a3b8;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .preview-info div {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* Gallery */
-        .gallery-section {
-            background: rgba(0, 0, 0, 0.25);
-            border-radius: 24px;
-            padding: 14px;
-        }
-
-        .gallery-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-
-        .gallery-header h3 {
-            color: white;
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .photo-count {
-            background: rgba(59, 130, 246, 0.15);
-            padding: 2px 8px;
-            border-radius: 30px;
-            color: #3b82f6;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            max-height: 180px;
-            overflow-y: auto;
-            padding: 2px;
-        }
-
-        .gallery-item {
-            position: relative;
-            aspect-ratio: 1;
-            border-radius: 14px;
-            overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            cursor: pointer;
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .gallery-item .delete-btn {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            width: 20px;
-            height: 20px;
-            background: rgba(239, 68, 68, 0.8);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        .gallery-item:hover .delete-btn {
-            opacity: 1;
-        }
-
-        .empty-gallery {
-            grid-column: span 3;
-            text-align: center;
-            padding: 30px 0;
-            color: #6b7a99;
+            color: #64748b;
             font-size: 12px;
         }
 
-        /* Modal */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
+        .footer-note {
+            text-align: center;
+            color: #64748b;
+            font-size: 13px;
+            margin-top: 16px;
         }
 
-        .modal.show {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .modal-content {
-            max-width: 90%;
-            max-height: 80%;
-        }
-
-        .modal-content img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border-radius: 16px;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        /* Toast */
+        /* Toast notification */
         .toast {
             position: fixed;
             bottom: 20px;
-            left: 20px;
-            right: 20px;
-            background: #1e2f40;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 30px;
-            font-size: 13px;
-            text-align: center;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s;
-            z-index: 1001;
-            max-width: 300px;
-            margin: 0 auto;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-        }
-
-        .toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .toast.error {
-            background: #ef4444;
-        }
-
-        .toast.success {
-            background: #22c55e;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: #facc15;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 14px;
+            border: 1px solid #facc15;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            z-index: 1000;
+            transition: opacity 0.3s;
         }
     </style>
 </head>
 <body>
-    <div class="mini-container">
-        <!-- Header -->
-        <div class="header">
-            <div class="logo">
-                <div class="logo-icon">📸</div>
-                <div class="logo-text">
-                    <h2>GPS Camera</h2>
-                    <p>with location</p>
-                </div>
-            </div>
-            <div class="signal" id="signalBadge">
+    <div class="container">
+        <h2>
+            📡 GPS Real-time Tracker
+            <span id="live-badge">LIVE</span>
+        </h2>
+
+        <!-- GPS Real-time Section -->
+        <div class="gps-card" id="gps-card">
+            <div class="gps-header">
                 <div class="dot"></div>
-                <span id="signalText">LIVE</span>
+                <span>📍 GPS កំពុងតាមដាន</span>
+                <span class="update-counter" id="update-counter">0 ដង</span>
+            </div>
+            
+            <div class="coord-row">
+                <div class="coord-label">
+                    <span>🌐</span> រយៈទទឹង (Latitude)
+                </div>
+                <div class="coord-value" id="latitude">កំពុងទទួលសញ្ញា...</div>
+            </div>
+            
+            <div class="coord-row">
+                <div class="coord-label">
+                    <span>📍</span> រយៈបណ្ដោយ (Longitude)
+                </div>
+                <div class="coord-value" id="longitude">កំពុងទទួលសញ្ញា...</div>
+            </div>
+
+            <div class="coord-row">
+                <div class="coord-label">
+                    <span>🎯</span> ភាពត្រឹមត្រូវ
+                </div>
+                <div class="coord-value" id="accuracy">-- ម៉ែត្រ</div>
+            </div>
+
+            <!-- បង្ហាញល្បឿន និងទិសដៅ -->
+            <div class="speed-indicator">
+                <div class="speed-item">
+                    <div class="speed-label">⏱️ ពេលវេលា</div>
+                    <div class="speed-value" id="update-time">--:--:--</div>
+                </div>
+                <div class="speed-item">
+                    <div class="speed-label">📊 ចម្ងាយផ្លាស់ប្ដូរ</div>
+                    <div class="speed-value" id="distance-moved">0 ម៉ែត្រ</div>
+                </div>
             </div>
         </div>
 
-        <!-- GPS Mini Card -->
-        <div class="gps-card">
-            <div class="gps-row">
-                <div class="gps-label">
-                    <span>🌐</span> រយៈទទឹង
-                </div>
-                <div class="gps-value lat" id="latitude">--</div>
-            </div>
-            <div class="gps-row">
-                <div class="gps-label">
-                    <span>📍</span> រយៈបណ្ដោយ
-                </div>
-                <div class="gps-value lng" id="longitude">--</div>
-            </div>
-            
-            <div class="gps-stats">
-                <div class="stat">
-                    <div class="value" id="accuracy">--</div>
-                    <div class="label">ភាពត្រឹមត្រូវ</div>
-                </div>
-                <div class="stat">
-                    <div class="value" id="satelliteCount">--</div>
-                    <div class="label">ផ្កាយរណប</div>
-                </div>
-                <div class="stat">
-                    <div class="value" id="time">--:--</div>
-                    <div class="label">ម៉ោង</div>
-                </div>
-            </div>
+        <!-- ប៊ូតុងគ្រប់គ្រង GPS -->
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button class="btn btn-primary" id="refresh-gps" style="flex: 1; padding: 10px;">
+                🔄 ស្នើសុំទីតាំងថ្មី
+            </button>
+            <button class="btn btn-secondary" id="copy-coords" style="flex: 1; padding: 10px;">
+                📋 ចម្លងកូអរដោនេ
+            </button>
         </div>
 
         <!-- Camera Section -->
         <div class="camera-section">
             <div class="camera-header">
-                <h3>
-                    <span>📷</span> ថតរូប
-                </h3>
-                <div class="camera-status" id="cameraStatus">បិទ</div>
+                <h3>📷 កាមេរ៉ាស្កេន QR</h3>
+                <div class="status-badge" id="camera-status">ត្រៀមខ្លួន</div>
             </div>
 
-            <!-- Video Container -->
             <div class="video-container">
-                <video id="video" playsinline></video>
-                <canvas id="canvas"></canvas>
-                <div class="scan-overlay"></div>
+                <video id="video" playsinline autoplay></video>
+                <div class="scan-overlay" id="scan-overlay"></div>
             </div>
 
-            <!-- Camera Controls -->
-            <div class="button-grid">
-                <button class="btn primary" id="startCamera">
-                    <span>📷</span> បើក
-                </button>
-                <button class="btn secondary" id="stopCamera">
-                    <span>⏹️</span> បិទ
-                </button>
-            </div>
-
-            <!-- Take Photo Button -->
-            <button class="btn primary" id="takePhoto" style="width: 100%; margin-bottom: 8px;">
-                <span>📸</span> ថតរូប
-            </button>
-
-            <!-- Photo Preview -->
-            <div class="photo-preview" id="photoPreview">
-                <div class="preview-header">
-                    <span>🖼️ រូបថតចុងក្រោយ</span>
-                    <button class="btn secondary" id="savePhoto" style="padding: 4px 12px; font-size: 11px;">
-                        💾 រក្សាទុក
-                    </button>
-                </div>
-                <div class="preview-image" id="previewImage">
-                    <img src="" alt="Preview" id="previewImg">
-                </div>
-                <div class="preview-info" id="previewInfo"></div>
+            <div class="button-group">
+                <button class="btn btn-primary" id="startCamera">ចាប់ផ្ដើមកាមេរ៉ា</button>
+                <button class="btn btn-secondary" id="stopCamera">បិទកាមេរ៉ា</button>
             </div>
         </div>
 
-        <!-- Gallery Section -->
-        <div class="gallery-section">
-            <div class="gallery-header">
-                <h3>
-                    <span>🖼️</span> រូបថតដែលបានរក្សាទុក
-                </h3>
-                <div class="photo-count" id="photoCount">0</div>
-            </div>
-            <div class="gallery-grid" id="galleryGrid">
-                <div class="empty-gallery">
-                    គ្មានរូបថត
-                </div>
-            </div>
+        <!-- QR Result -->
+        <div class="result-card">
+            <div class="result-title">📦 លទ្ធផល QR Code</div>
+            <div class="qr-result" id="qr-result">⏳ រង់ចាំស្កេន QR...</div>
+        </div>
+
+        <!-- ស្ថិតិ GPS -->
+        <div class="stats-row">
+            <span>📡 ផ្កាយរណប: <span id="satellites">--</span></span>
+            <span>⚡ កម្ពស់: <span id="altitude">-- ម</span></span>
+        </div>
+
+        <div class="footer-note">
+            ⚡ GPS នឹងធ្វើបច្ចុប្បន្នភាពដោយស្វ័យប្រវត្តិពេលអ្នកផ្លាស់ប្ដូរទីតាំង
         </div>
     </div>
 
-    <!-- Modal for full image -->
-    <div class="modal" id="imageModal">
-        <button class="modal-close" id="closeModal">&times;</button>
-        <div class="modal-content">
-            <img id="modalImage" src="" alt="Full size">
-        </div>
-    </div>
+    <!-- Toast notification element -->
+    <div id="toast" class="toast" style="display: none; opacity: 0;">📍 ទីតាំងបានផ្លាស់ប្ដូរ</div>
 
-    <!-- Toast -->
-    <div id="toast" class="toast"></div>
+    <!-- ZXing Library for QR scan -->
+    <script src="https://unpkg.com/@zxing/library@latest/umd/index.min.js"></script>
 
     <script>
-        // DOM Elements
+        // DOM elements
         const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const latitudeEl = document.getElementById('latitude');
-        const longitudeEl = document.getElementById('longitude');
-        const accuracyEl = document.getElementById('accuracy');
-        const satelliteCountEl = document.getElementById('satelliteCount');
-        const timeEl = document.getElementById('time');
-        const signalBadge = document.getElementById('signalBadge');
-        const signalText = document.getElementById('signalText');
-        const cameraStatus = document.getElementById('cameraStatus');
-        const photoPreview = document.getElementById('photoPreview');
-        const previewImg = document.getElementById('previewImg');
-        const previewInfo = document.getElementById('previewInfo');
-        const galleryGrid = document.getElementById('galleryGrid');
-        const photoCount = document.getElementById('photoCount');
-        const toastEl = document.getElementById('toast');
-        const imageModal = document.getElementById('imageModal');
-        const modalImage = document.getElementById('modalImage');
+        const latitudeSpan = document.getElementById('latitude');
+        const longitudeSpan = document.getElementById('longitude');
+        const accuracySpan = document.getElementById('accuracy');
+        const updateTimeSpan = document.getElementById('update-time');
+        const updateCounterSpan = document.getElementById('update-counter');
+        const distanceMovedSpan = document.getElementById('distance-moved');
+        const satellitesSpan = document.getElementById('satellites');
+        const altitudeSpan = document.getElementById('altitude');
+        const qrResultSpan = document.getElementById('qr-result');
+        const cameraStatus = document.getElementById('camera-status');
+        const gpsCard = document.getElementById('gps-card');
+        const liveBadge = document.getElementById('live-badge');
+        const toast = document.getElementById('toast');
 
-        // Variables
+        // Global variables
         let watchId = null;
-        let currentLat = '--';
-        let currentLng = '--';
-        let currentAcc = '--';
-        let photos = JSON.parse(localStorage.getItem('gps_photos')) || [];
-        let lastPhotoData = null;
+        let updateCount = 0;
+        let lastLat = null;
+        let lastLng = null;
+        let totalDistance = 0;
+        let codeReader = null;
 
         // ==================== GPS FUNCTIONS ====================
         function startGPS() {
             if (!navigator.geolocation) {
-                showToast('GPS មិនគាំទ្រ', 'error');
+                showError('GPS មិនគាំទ្រលើឧបករណ៍នេះទេ');
                 return;
             }
 
+            // បង្ហាញសារថាកំពុងទទួលសញ្ញា
+            latitudeSpan.textContent = '⏳ កំពុងទទួលសញ្ញា...';
+            longitudeSpan.textContent = '⏳ កំពុងទទួលសញ្ញា...';
+
+            // ប្រើ watchPosition ដើម្បីឲ្យវាប្ដូរដោយស្វ័យប្រវត្តិ
             watchId = navigator.geolocation.watchPosition(
                 (position) => {
+                    // បង្កើនចំនួនដងដែលបានធ្វើបច្ចុប្បន្នភាព
+                    updateCount++;
+                    updateCounterSpan.textContent = updateCount + ' ដង';
+
+                    // យកតម្លៃពី GPS
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
                     const acc = position.coords.accuracy;
+                    const alt = position.coords.altitude;
+                    const speed = position.coords.speed;
 
-                    currentLat = lat.toFixed(6);
-                    currentLng = lng.toFixed(6);
-                    currentAcc = acc.toFixed(1);
+                    // គណនាចម្ងាយដែលបានផ្លាស់ប្ដូរ
+                    if (lastLat !== null && lastLng !== null) {
+                        const distance = calculateDistance(lastLat, lastLng, lat, lng);
+                        if (distance > 1) { // បើផ្លាស់ប្ដូរលើសពី 1 ម៉ែត្រ
+                            totalDistance += distance;
+                            distanceMovedSpan.textContent = totalDistance.toFixed(1) + ' ម៉ែត្រ';
+                            
+                            // បង្ហាញ Toast Notification
+                            showToast('📍 ទីតាំងផ្លាស់ប្ដូរ ' + distance.toFixed(1) + 'ម');
+                            
+                            // ធ្វើឲ្យ GPS Card ភ្លឺ
+                            gpsCard.classList.add('updating');
+                            setTimeout(() => {
+                                gpsCard.classList.remove('updating');
+                            }, 500);
+                        }
+                    }
 
-                    latitudeEl.textContent = currentLat;
-                    longitudeEl.textContent = currentLng;
-                    accuracyEl.textContent = currentAcc + 'm';
+                    // រក្សាទុកតម្លៃចាស់
+                    lastLat = lat;
+                    lastLng = lng;
 
-                    // Update satellite count (estimated)
-                    let satellites = 0;
-                    if (acc < 5) satellites = Math.floor(Math.random() * 4) + 14;
-                    else if (acc < 10) satellites = Math.floor(Math.random() * 4) + 10;
-                    else if (acc < 30) satellites = Math.floor(Math.random() * 4) + 6;
-                    else satellites = Math.floor(Math.random() * 3) + 3;
-                    satelliteCountEl.textContent = satellites;
+                    // បង្ហាញតម្លៃថ្មីជាមួយ Animation
+                    updateValueWithAnimation(latitudeSpan, lat.toFixed(6));
+                    updateValueWithAnimation(longitudeSpan, lng.toFixed(6));
+                    
+                    accuracySpan.textContent = acc.toFixed(1) + ' ម៉ែត្រ';
+                    
+                    // បង្ហាញ altitude បើមាន
+                    if (alt !== null) {
+                        altitudeSpan.textContent = alt.toFixed(1) + ' ម';
+                    }
 
-                    // Update time
+                    // បង្ហាញពេលវេលា
                     const now = new Date();
-                    timeEl.textContent = now.toLocaleTimeString('km-KH', { 
+                    updateTimeSpan.textContent = now.toLocaleTimeString('km-KH', { 
                         hour: '2-digit', 
-                        minute: '2-digit' 
+                        minute: '2-digit', 
+                        second: '2-digit' 
                     });
 
-                    // Visual feedback
-                    latitudeEl.style.color = '#3b82f6';
-                    longitudeEl.style.color = '#8b5cf6';
-                    setTimeout(() => {
-                        latitudeEl.style.color = '';
-                        longitudeEl.style.color = '';
-                    }, 200);
+                    // ប៉ាន់ស្មានចំនួនផ្កាយរណប (គ្មាន API ផ្លូវការ)
+                    satellitesSpan.textContent = Math.floor(Math.random() * 5) + 8; // 8-12 ផ្កាយ
+
+                    // ប្ដូរ Live Badge
+                    liveBadge.innerHTML = 'LIVE';
+                    liveBadge.style.background = '#22c55e';
+                    liveBadge.style.color = '#0f172a';
+
+                    console.log(`📍 GPS Update #${updateCount}:`, lat, lng);
                 },
                 (error) => {
-                    let message = '';
-                    if (error.code === 1) message = 'គ្មានសិទ្ធិ GPS';
-                    else if (error.code === 2) message = 'សញ្ញា GPS ខ្សោយ';
-                    else message = 'GPS Error';
+                    let errorMsg = 'GPS Error';
+                    if (error.code === 1) errorMsg = 'គ្មានសិទ្ធិ GPS';
+                    else if (error.code === 2) errorMsg = 'សញ្ញា GPS ខ្សោយ';
+                    else if (error.code === 3) errorMsg = 'GPS ផុតកំណត់ពេល';
+
+                    latitudeSpan.textContent = '--';
+                    longitudeSpan.textContent = '--';
+                    accuracySpan.textContent = errorMsg;
                     
-                    signalBadge.style.background = 'rgba(239, 68, 68, 0.15)';
-                    signalText.style.color = '#ef4444';
-                    signalText.textContent = 'NO GPS';
+                    liveBadge.innerHTML = 'NO SIGNAL';
+                    liveBadge.style.background = '#ef4444';
+                    liveBadge.style.color = '#fff';
+
+                    console.warn('GPS Error:', error);
                 },
                 {
                     enableHighAccuracy: true,
@@ -727,28 +534,108 @@
                     timeout: 10000
                 }
             );
+
+            console.log('✅ GPS Tracking Started');
+        }
+
+        // គណនាចម្ងាយរវាង 2 ចំណុច (Haversine formula)
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; // កាំផែនដីគិតជាម៉ែត្រ
+            const φ1 = lat1 * Math.PI/180;
+            const φ2 = lat2 * Math.PI/180;
+            const Δφ = (lat2-lat1) * Math.PI/180;
+            const Δλ = (lon2-lon1) * Math.PI/180;
+
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                    Math.cos(φ1) * Math.cos(φ2) *
+                    Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+            return R * c; // ចម្ងាយគិតជាម៉ែត្រ
+        }
+
+        // ធ្វើឲ្យតម្លៃមាន Animation ពេលប្ដូរ
+        function updateValueWithAnimation(element, newValue) {
+            element.textContent = newValue;
+            element.classList.add('changed');
+            setTimeout(() => {
+                element.classList.remove('changed');
+            }, 200);
+        }
+
+        // បង្ហាញ Toast Notification
+        function showToast(message) {
+            toast.textContent = message;
+            toast.style.display = 'block';
+            toast.style.opacity = '1';
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 300);
+            }, 2000);
+        }
+
+        // បង្ហាញ Error
+        function showError(message) {
+            latitudeSpan.textContent = '❌';
+            longitudeSpan.textContent = '❌';
+            accuracySpan.textContent = message;
+        }
+
+        // ស្នើសុំទីតាំងថ្មី (Manual Refresh)
+        function refreshGPS() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        showToast('📍 បានទទួលទីតាំងថ្មី');
+                    },
+                    (error) => {
+                        showToast('❌ មិនអាចទទួលបានទីតាំង');
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000
+                    }
+                );
+            }
+        }
+
+        // ចម្លងកូអរដោនេ
+        function copyCoordinates() {
+            const lat = latitudeSpan.textContent;
+            const lng = longitudeSpan.textContent;
+            
+            if (lat && lng && !lat.includes('កំពុង') && !lat.includes('--')) {
+                const coords = `${lat}, ${lng}`;
+                navigator.clipboard.writeText(coords).then(() => {
+                    showToast('✅ ចម្លងរួចរាល់: ' + coords);
+                });
+            } else {
+                showToast('❌ គ្មានទីតាំងដើម្បីចម្លង');
+            }
         }
 
         // ==================== CAMERA FUNCTIONS ====================
         async function startCamera() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { 
-                        facingMode: 'environment',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    } 
+                    video: { facingMode: 'environment' }
                 });
                 
                 video.srcObject = stream;
-                await video.play();
-                
-                cameraStatus.textContent = 'បើក';
-                cameraStatus.classList.add('active');
-                showToast('កាមេរ៉ាបានបើក', 'success');
+                cameraStatus.textContent = '✅ កាមេរ៉ាបើកហើយ';
+                cameraStatus.style.color = '#facc15';
+
+                // ចាប់ផ្ដើម QR Scanner
+                startQRScanner();
 
             } catch (err) {
-                showToast('មិនអាចបើកកាមេរ៉ាបាន', 'error');
+                console.error('Camera Error:', err);
+                cameraStatus.textContent = '❌ មិនអាចបើកកាមេរ៉ាបាន';
+                cameraStatus.style.color = '#ef4444';
+                showToast('❌ សូមអនុញ្ញាតឲ្យប្រើកាមេរ៉ា');
             }
         }
 
@@ -758,163 +645,55 @@
                 tracks.forEach(track => track.stop());
                 video.srcObject = null;
                 
-                cameraStatus.textContent = 'បិទ';
-                cameraStatus.classList.remove('active');
-                showToast('កាមេរ៉ាបានបិទ');
+                if (codeReader) {
+                    codeReader.reset();
+                }
+                
+                cameraStatus.textContent = '⏸️ កាមេរ៉ាបិទ';
+                cameraStatus.style.color = '#94a3b8';
             }
         }
 
-        function takePhoto() {
-            if (!video.srcObject) {
-                showToast('សូមបើកកាមេរ៉ាជាមុន', 'error');
-                return;
-            }
+        function startQRScanner() {
+            if (!video.srcObject) return;
 
-            // Set canvas size
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            
-            // Draw video frame
-            const context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            codeReader = new ZXing.BrowserQRCodeReader();
 
-            // Get photo data
-            lastPhotoData = canvas.toDataURL('image/jpeg', 0.9);
+            codeReader.decodeFromVideoElement(video, (result, error) => {
+                if (result) {
+                    const qrText = result.getText();
+                    qrResultSpan.textContent = qrText;
+                    
+                    // Flash effect
+                    document.getElementById('scan-overlay').style.borderColor = '#22c55e';
+                    setTimeout(() => {
+                        document.getElementById('scan-overlay').style.borderColor = 'rgba(250, 204, 21, 0.6)';
+                    }, 200);
 
-            // Show preview
-            previewImg.src = lastPhotoData;
-            
-            let info = '';
-            if (currentLat !== '--' && currentLng !== '--') {
-                info = `
-                    <div>📍 ${currentLat}, ${currentLng}</div>
-                    <div>🎯 ${currentAcc}m</div>
-                    <div>⏱️ ${new Date().toLocaleTimeString('km-KH')}</div>
-                `;
-            } else {
-                info = '<div>⏳ រង់ចាំ GPS...</div>';
-            }
-            
-            previewInfo.innerHTML = info;
-            photoPreview.classList.add('show');
-
-            // Flash effect
-            video.style.opacity = '0.7';
-            setTimeout(() => {
-                video.style.opacity = '1';
-            }, 100);
-
-            showToast('ថតរូបរួចរាល់', 'success');
-        }
-
-        function savePhoto() {
-            if (!lastPhotoData) {
-                showToast('សូមថតរូបជាមុន', 'error');
-                return;
-            }
-
-            if (currentLat === '--' || currentLng === '--') {
-                showToast('សូមរង់ចាំ GPS', 'error');
-                return;
-            }
-
-            const photo = {
-                id: Date.now(),
-                data: lastPhotoData,
-                latitude: currentLat,
-                longitude: currentLng,
-                accuracy: currentAcc,
-                timestamp: new Date().toLocaleString('km-KH')
-            };
-
-            photos.unshift(photo);
-            if (photos.length > 9) photos.pop();
-
-            // Save to localStorage
-            localStorage.setItem('gps_photos', JSON.stringify(photos));
-
-            // Update gallery
-            displayGallery();
-            
-            // Hide preview
-            photoPreview.classList.remove('show');
-            lastPhotoData = null;
-
-            showToast('បានរក្សាទុករូបថត', 'success');
-        }
-
-        function displayGallery() {
-            if (photos.length === 0) {
-                galleryGrid.innerHTML = '<div class="empty-gallery">គ្មានរូបថត</div>';
-                photoCount.textContent = '0';
-                return;
-            }
-
-            let html = '';
-            photos.forEach(photo => {
-                html += `
-                    <div class="gallery-item">
-                        <img src="${photo.data}" alt="Photo" onclick="showFullImage('${photo.data}')">
-                        <button class="delete-btn" onclick="deletePhoto(${photo.id}, event)">×</button>
-                    </div>
-                `;
+                    // បង្ហាញទិន្នន័យ
+                    console.log('✅ QR Scanned:', qrText);
+                    console.log('📍 Current Location:', lastLat, lastLng);
+                    
+                    showToast('✅ បានស្កេន QR Code');
+                }
             });
-
-            galleryGrid.innerHTML = html;
-            photoCount.textContent = photos.length;
-        }
-
-        window.showFullImage = function(dataUrl) {
-            modalImage.src = dataUrl;
-            imageModal.classList.add('show');
-        };
-
-        window.deletePhoto = function(id, event) {
-            event.stopPropagation();
-            
-            photos = photos.filter(p => p.id !== id);
-            localStorage.setItem('gps_photos', JSON.stringify(photos));
-            displayGallery();
-            showToast('បានលុបរូបថត');
-        };
-
-        // ==================== UTILITIES ====================
-        function showToast(message, type = 'success') {
-            toastEl.textContent = message;
-            toastEl.classList.add('show');
-            
-            if (type === 'error') {
-                toastEl.classList.add('error');
-                toastEl.classList.remove('success');
-            } else {
-                toastEl.classList.add('success');
-                toastEl.classList.remove('error');
-            }
-            
-            setTimeout(() => {
-                toastEl.classList.remove('show');
-            }, 2000);
         }
 
         // ==================== INITIALIZE ====================
         window.addEventListener('load', () => {
+            // ចាប់ផ្ដើម GPS ភ្លាមៗ
             startGPS();
-            displayGallery();
 
+            // Event listeners
             document.getElementById('startCamera').addEventListener('click', startCamera);
             document.getElementById('stopCamera').addEventListener('click', stopCamera);
-            document.getElementById('takePhoto').addEventListener('click', takePhoto);
-            document.getElementById('savePhoto').addEventListener('click', savePhoto);
-            document.getElementById('closeModal').addEventListener('click', () => {
-                imageModal.classList.remove('show');
-            });
+            document.getElementById('refresh-gps').addEventListener('click', refreshGPS);
+            document.getElementById('copy-coords').addEventListener('click', copyCoordinates);
 
-            imageModal.addEventListener('click', (e) => {
-                if (e.target === imageModal) {
-                    imageModal.classList.remove('show');
-                }
-            });
+            // សាកល្បង GPS Simulator
+            console.log('ℹ️ សាកល្បងផ្លាស់ប្ដូរទីតាំងក្នុង DevTools > Sensors');
 
+            // បិទ GPS និងកាមេរ៉ាពេលចាកចេញ
             window.addEventListener('beforeunload', () => {
                 if (watchId) {
                     navigator.geolocation.clearWatch(watchId);
