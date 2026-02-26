@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>📸 GPS Camera Mini</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #0a0f1e;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+
+        /* Mini Container */
+        .mini-container {
+            max-width: 340px;
+            width: 100%;
+            background: rgba(18, 25, 40, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+            box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .logo-text h2 {
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .logo-text p {
+            color: #6b7a99;
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .signal {
+            background: rgba(34, 197, 94, 0.15);
+            padding: 4px 10px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        .signal span {
+            color: #22c55e;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* GPS Mini Card */
+        .gps-card {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 24px;
+            padding: 14px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .gps-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .gps-label {
+            color: #6b7a99;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .gps-value {
+            color: white;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .gps-value.lat {
+            color: #3b82f6;
+        }
+
+        .gps-value.lng {
+            color: #8b5cf6;
+        }
+
+        .gps-stats {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .stat {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .stat .value {
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .stat .label {
+            color: #6b7a99;
+            font-size: 9px;
+            margin-top: 2px;
+        }
+
+        /* Camera Section */
+        .camera-section {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 24px;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+
+        .camera-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .camera-header h3 {
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .camera-status {
+            background: rgba(239, 68, 68, 0.15);
+            padding: 4px 10px;
+            border-radius: 30px;
+            color: #ef4444;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .camera-status.active {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+
+        /* Video Container */
+        .video-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        .scan-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 2px solid #3b82f6;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.3);
+            pointer-events: none;
+            animation: scan 2s infinite;
+        }
+
+        @keyframes scan {
+            0% { border-color: #3b82f6; }
+            50% { border-color: #8b5cf6; }
+            100% { border-color: #3b82f6; }
+        }
+
+        /* Button Grid */
+        .button-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .btn {
+            padding: 12px;
+            border: none;
+            border-radius: 24px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn.primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            box-shadow: 0 6px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn.secondary {
+            background: rgba(45, 58, 79, 0.8);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn.primary:active {
+            transform: scale(0.97);
+        }
+
+        .btn.secondary:active {
+            transform: scale(0.97);
+        }
+
+        /* Photo Preview */
+        .photo-preview {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            padding: 12px;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .photo-preview.show {
+            display: block;
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .preview-header span {
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 140px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .preview-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-info {
+            margin-top: 10px;
+            font-size: 11px;
+            color: #94a3b8;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .preview-info div {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Gallery */
+        .gallery-section {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 24px;
+            padding: 14px;
+        }
+
+        .gallery-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .gallery-header h3 {
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .photo-count {
+            background: rgba(59, 130, 246, 0.15);
+            padding: 2px 8px;
+            border-radius: 30px;
+            color: #3b82f6;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            max-height: 180px;
+            overflow-y: auto;
+            padding: 2px;
+        }
+
+        .gallery-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-item .delete-btn {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 20px;
+            height: 20px;
+            background: rgba(239, 68, 68, 0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .gallery-item:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .empty-gallery {
+            grid-column: span 3;
+            text-align: center;
+            padding: 30px 0;
+            color: #6b7a99;
+            font-size: 12px;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .modal.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 80%;
+        }
+
+        .modal-content img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 16px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: #1e2f40;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            text-align: center;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1001;
+            max-width: 300px;
+            margin: 0 auto;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.error {
+            background: #ef4444;
+        }
+
+        .toast.success {
+            background: #22c55e;
+        }
+    </style>
+</head>
+<body>
+    <div class="mini-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">📸</div>
+                <div class="logo-text">
+                    <h2>GPS Camera</h2>
+                    <p>with location</p>
+                </div>
+            </div>
+            <div class="signal" id="signalBadge">
+                <div class="dot"></div>
+                <span id="signalText">LIVE</span>
+            </div>
+        </div>
+
+        <!-- GPS Mini Card -->
+        <div class="gps-card">
+            <div class="gps-row">
+                <div class="gps-label">
+                    <span>🌐</span> រយៈទទឹង
+                </div>
+                <div class="gps-value lat" id="latitude">--</div>
+            </div>
+            <div class="gps-row">
+                <div class="gps-label">
+                    <span>📍</span> រយៈបណ្ដោយ
+                </div>
+                <div class="gps-value lng" id="longitude">--</div>
+            </div>
+            
+            <div class="gps-stats">
+                <div class="stat">
+                    <div class="value" id="accuracy">--</div>
+                    <div class="label">ភាពត្រឹមត្រូវ</div>
+                </div>
+                <div class="stat">
+                    <div class="value" id="satelliteCount">--</div>
+                    <div class="label">ផ្កាយរណប</div>
+                </div>
+                <div class="stat">
+                    <div class="value" id="time">--:--</div>
+                    <div class="label">ម៉ោង</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Camera Section -->
+        <div class="camera-section">
+            <div class="camera-header">
+                <h3>
+                    <span>📷</span> ថតរូប
+                </h3>
+                <div class="camera-status" id="cameraStatus">បិទ</div>
+            </div>
+
+            <!-- Video Container -->
+            <div class="video-container">
+                <video id="video" playsinline></video>
+                <canvas id="canvas"></canvas>
+                <div class="scan-overlay"></div>
+            </div>
+
+            <!-- Camera Controls -->
+            <div class="button-grid">
+                <button class="btn primary" id="startCamera">
+                    <span>📷</span> បើក
+                </button>
+                <button class="btn secondary" id="stopCamera">
+                    <span>⏹️</span> បិទ
+                </button>
+            </div>
+
+            <!-- Take Photo Button -->
+            <button class="btn primary" id="takePhoto" style="width: 100%; margin-bottom: 8px;">
+                <span>📸</span> ថតរូប
+            </button>
+
+            <!-- Photo Preview -->
+            <div class="photo-preview" id="photoPreview">
+                <div class="preview-header">
+                    <span>🖼️ រូបថតចុងក្រោយ</span>
+                    <button class="btn secondary" id="savePhoto" style="padding: 4px 12px; font-size: 11px;">
+                        💾 រក្សាទុក
+                    </button>
+                </div>
+                <div class="preview-image" id="previewImage">
+                    <img src="" alt="Preview" id="previewImg">
+                </div>
+                <div class="preview-info" id="previewInfo"></div>
+            </div>
+        </div>
+
+        <!-- Gallery Section -->
+        <div class="gallery-section">
+            <div class="gallery-header">
+                <h3>
+                    <span>🖼️</span> រូបថតដែលបានរក្សាទុក
+                </h3>
+                <div class="photo-count" id="photoCount">0</div>
+            </div>
+            <div class="gallery-grid" id="galleryGrid">
+                <div class="empty-gallery">
+                    គ្មានរូបថត
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for full image -->
+    <div class="modal" id="imageModal">
+        <button class="modal-close" id="closeModal">&times;</button>
+        <div class="modal-content">
+            <img id="modalImage" src="" alt="Full size">
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // DOM Elements
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const latitudeEl = document.getElementById('latitude');
+        const longitudeEl = document.getElementById('longitude');
+        const accuracyEl = document.getElementById('accuracy');
+        const satelliteCountEl = document.getElementById('satelliteCount');
+        const timeEl = document.getElementById('time');
+        const signalBadge = document.getElementById('signalBadge');
+        const signalText = document.getElementById('signalText');
+        const cameraStatus = document.getElementById('cameraStatus');
+        const photoPreview = document.getElementById('photoPreview');
+        const previewImg = document.getElementById('previewImg');
+        const previewInfo = document.getElementById('previewInfo');
+        const galleryGrid = document.getElementById('galleryGrid');
+        const photoCount = document.getElementById('photoCount');
+        const toastEl = document.getElementById('toast');
+        const imageModal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+
+        // Variables
+        let watchId = null;
+        let currentLat = '--';
+        let currentLng = '--';
+        let currentAcc = '--';
+        let photos = JSON.parse(localStorage.getItem('gps_photos')) || [];
+        let lastPhotoData = null;
+
+        // ==================== GPS FUNCTIONS ====================
+        function startGPS() {
+            if (!navigator.geolocation) {
+                showToast('GPS មិនគាំទ្រ', 'error');
+                return;
+            }
+
+            watchId = navigator.geolocation.watchPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    const acc = position.coords.accuracy;
+
+                    currentLat = lat.toFixed(6);
+                    currentLng = lng.toFixed(6);
+                    currentAcc = acc.toFixed(1);
+
+                    latitudeEl.textContent = currentLat;
+                    longitudeEl.textContent = currentLng;
+                    accuracyEl.textContent = currentAcc + 'm';
+
+                    // Update satellite count (estimated)
+                    let satellites = 0;
+                    if (acc < 5) satellites = Math.floor(Math.random() * 4) + 14;
+                    else if (acc < 10) satellites = Math.floor(Math.random() * 4) + 10;
+                    else if (acc < 30) satellites = Math.floor(Math.random() * 4) + 6;
+                    else satellites = Math.floor(Math.random() * 3) + 3;
+                    satelliteCountEl.textContent = satellites;
+
+                    // Update time
+                    const now = new Date();
+                    timeEl.textContent = now.toLocaleTimeString('km-KH', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    });
+
+                    // Visual feedback
+                    latitudeEl.style.color = '#3b82f6';
+                    longitudeEl.style.color = '#8b5cf6';
+                    setTimeout(() => {
+                        latitudeEl.style.color = '';
+                        longitudeEl.style.color = '';
+                    }, 200);
+                },
+                (error) => {
+                    let message = '';
+                    if (error.code === 1) message = 'គ្មានសិទ្ធិ GPS';
+                    else if (error.code === 2) message = 'សញ្ញា GPS ខ្សោយ';
+                    else message = 'GPS Error';
+                    
+                    signalBadge.style.background = 'rgba(239, 68, 68, 0.15)';
+                    signalText.style.color = '#ef4444';
+                    signalText.textContent = 'NO GPS';
+                },
+                {
+                    enableHighAccuracy: true,
+                    maximumAge: 0,
+                    timeout: 10000
+                }
+            );
+        }
+
+        // ==================== CAMERA FUNCTIONS ====================
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    } 
+                });
+                
+                video.srcObject = stream;
+                await video.play();
+                
+                cameraStatus.textContent = 'បើក';
+                cameraStatus.classList.add('active');
+                showToast('កាមេរ៉ាបានបើក', 'success');
+
+            } catch (err) {
+                showToast('មិនអាចបើកកាមេរ៉ាបាន', 'error');
+            }
+        }
+
+        function stopCamera() {
+            if (video.srcObject) {
+                const tracks = video.srcObject.getTracks();
+                tracks.forEach(track => track.stop());
+                video.srcObject = null;
+                
+                cameraStatus.textContent = 'បិទ';
+                cameraStatus.classList.remove('active');
+                showToast('កាមេរ៉ាបានបិទ');
+            }
+        }
+
+        function takePhoto() {
+            if (!video.srcObject) {
+                showToast('សូមបើកកាមេរ៉ាជាមុន', 'error');
+                return;
+            }
+
+            // Set canvas size
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            // Draw video frame
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Get photo data
+            lastPhotoData = canvas.toDataURL('image/jpeg', 0.9);
+
+            // Show preview
+            previewImg.src = lastPhotoData;
+            
+            let info = '';
+            if (currentLat !== '--' && currentLng !== '--') {
+                info = `
+                    <div>📍 ${currentLat}, ${currentLng}</div>
+                    <div>🎯 ${currentAcc}m</div>
+                    <div>⏱️ ${new Date().toLocaleTimeString('km-KH')}</div>
+                `;
+            } else {
+                info = '<div>⏳ រង់ចាំ GPS...</div>';
+            }
+            
+            previewInfo.innerHTML = info;
+            photoPreview.classList.add('show');
+
+            // Flash effect
+            video.style.opacity = '0.7';
+            setTimeout(() => {
+                video.style.opacity = '1';
+            }, 100);
+
+            showToast('ថតរូបរួចរាល់', 'success');
+        }
+
+        function savePhoto() {
+            if (!lastPhotoData) {
+                showToast('សូមថតរូបជាមុន', 'error');
+                return;
+            }
+
+            if (currentLat === '--' || currentLng === '--') {
+                showToast('សូមរង់ចាំ GPS', 'error');
+                return;
+            }
+
+            const photo = {
+                id: Date.now(),
+                data: lastPhotoData,
+                latitude: currentLat,
+                longitude: currentLng,
+                accuracy: currentAcc,
+                timestamp: new Date().toLocaleString('km-KH')
+            };
+
+            photos.unshift(photo);
+            if (photos.length > 9) photos.pop();
+
+            // Save to localStorage
+            localStorage.setItem('gps_photos', JSON.stringify(photos));
+
+            // Update gallery
+            displayGallery();
+            
+            // Hide preview
+            photoPreview.classList.remove('show');
+            lastPhotoData = null;
+
+            showToast('បានរក្សាទុករូបថត', 'success');
+        }
+
+        function displayGallery() {
+            if (photos.length === 0) {
+                galleryGrid.innerHTML = '<div class="empty-gallery">គ្មានរូបថត</div>';
+                photoCount.textContent = '0';
+                return;
+            }
+
+            let html = '';
+            photos.forEach(photo => {
+                html += `
+                    <div class="gallery-item">
+                        <img src="${photo.data}" alt="Photo" onclick="showFullImage('${photo.data}')">
+                        <button class="delete-btn" onclick="deletePhoto(${photo.id}, event)">×</button>
+                    </div>
+                `;
+            });
+
+            galleryGrid.innerHTML = html;
+            photoCount.textContent = photos.length;
+        }
+
+        window.showFullImage = function(dataUrl) {
+            modalImage.src = dataUrl;
+            imageModal.classList.add('show');
+        };
+
+        window.deletePhoto = function(id, event) {
+            event.stopPropagation();
+            
+            photos = photos.filter(p => p.id !== id);
+            localStorage.setItem('gps_photos', JSON.stringify(photos));
+            displayGallery();
+            showToast('បានលុបរូបថត');
+        };
+
+        // ==================== UTILITIES ====================
+        function showToast(message, type = 'success') {
+            toastEl.textContent = message;
+            toastEl.classList.add('show');
+            
+            if (type === 'error') {
+                toastEl.classList.add('error');
+                toastEl.classList.remove('success');
+            } else {
+                toastEl.classList.add('success');
+                toastEl.classList.remove('error');
+            }
+            
+            setTimeout(() => {
+                toastEl.classList.remove('show');
+            }, 2000);
+        }
+
+        // ==================== INITIALIZE ====================
+        window.addEventListener('load', () => {
+            startGPS();
+            displayGallery();
+
+            document.getElementById('startCamera').addEventListener('click', startCamera);
+            document.getElementById('stopCamera').addEventListener('click', stopCamera);
+            document.getElementById('takePhoto').addEventListener('click', takePhoto);
+            document.getElementById('savePhoto').addEventListener('click', savePhoto);
+            document.getElementById('closeModal').addEventListener('click', () => {
+                imageModal.classList.remove('show');
+            });
+
+            imageModal.addEventListener('click', (e) => {
+                if (e.target === imageModal) {
+                    imageModal.classList.remove('show');
+                }
+            });
+
+            window.addEventListener('beforeunload', () => {
+                if (watchId) {
+                    navigator.geolocation.clearWatch(watchId);
+                }
+                stopCamera();
+            });
+        });
+    </script>
+</body>
+</html>
